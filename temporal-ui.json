@@ -1,0 +1,60 @@
+{
+    "containerDefinitions": [
+        {
+            "name": "temporal-ui",
+            "image": "<temporal-ui-ecr-image>",
+            "cpu": 512,
+            "memory": 1024,
+            "portMappings": [
+                {
+                    "name": "temporal-ui-http",
+                    "containerPort": 8080,
+                    "hostPort": 8080,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "TEMPORAL_CORS_ORIGINS",
+                    "value": "<temporal-ui-host>"
+                },
+                {
+                    "name": "TEMPORAL_ADDRESS",
+                    "value": "<temporal-frontend-service-discovery-endpoint>:7233"
+                }
+            ],
+            "startTimeout": 30,
+            "stopTimeout": 120,
+            "user": "0",
+            "privileged": false,
+            "readonlyRootFilesystem": false,
+            "interactive": false,
+            "pseudoTerminal": false,
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/aws/ecs/temporal-server/temporal-ui",
+                    "awslogs-region": "eu-west-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            },
+            "systemControls": []
+        }
+    ],
+    "family": "temporal-ui",
+    "taskRoleArn": "<ecs-task-role-arn>",
+    "executionRoleArn": "<ecs-task-exec-role-arn>",
+    "networkMode": "awsvpc",
+    "volumes": [],
+    "placementConstraints": [],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "512",
+    "memory": "1024",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    }
+}

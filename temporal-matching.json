@@ -1,0 +1,104 @@
+{
+    "containerDefinitions": [
+        {
+            "name": "temporal-matching",
+            "image": "<temporal-server-ecr-image>",
+            "cpu": 512,
+            "memory": 1024,
+            "portMappings": [
+                {
+                    "name": "temporal-matching-grpc",
+                    "containerPort": 7235,
+                    "hostPort": 7235,
+                    "protocol": "tcp"
+                },
+                {
+                    "name": "temporal-matching-membership",
+                    "containerPort": 6935,
+                    "hostPort": 6935,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "command": [
+                "server",
+                "start"
+            ],
+            "environment": [
+                {
+                    "name": "SERVICES",
+                    "value": "matching"
+                },
+                {
+                    "name": "LOG_LEVEL",
+                    "value": "info"
+                },
+                {
+                    "name": "ENABLE_ES",
+                    "valueFrom": "false"
+                },
+                {
+                    "name": "DB",
+                    "valueFrom": "mysql8"
+                }
+            ],
+            "secrets": [
+                {
+                    "name": "MYSQL_SEEDS",
+                    "valueFrom": "<secret-arn>:MYSQL_SEEDS::"
+                },
+                {
+                    "name": "MYSQL_PORT",
+                    "valueFrom": "<secret-arn>:MYSQL_PORT::"
+                },
+                {
+                    "name": "MYSQL_USER",
+                    "valueFrom": "<secret-arn>:MYSQL_USER::"
+                },
+                {
+                    "name": "MYSQL_PWD",
+                    "valueFrom": "<secret-arn>:MYSQL_PWD::"
+                },
+                {
+                    "name": "DBNAME",
+                    "valueFrom": "<secret-arn>:DBNAME::"
+                },
+                {
+                    "name": "VISIBILITY_DBNAME",
+                    "valueFrom": "<secret-arn>:VISIBILITY_DBNAME::"
+                }
+            ],
+            "startTimeout": 30,
+            "stopTimeout": 120,
+            "user": "0",
+            "privileged": false,
+            "readonlyRootFilesystem": false,
+            "interactive": false,
+            "pseudoTerminal": false,
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/aws/ecs/temporal-server/temporal-matching",
+                    "awslogs-region": "eu-west-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            },
+            "systemControls": []
+        }
+    ],
+    "family": "temporal-matching",
+    "taskRoleArn": "<ecs-task-role-arn>",
+    "executionRoleArn": "<ecs-task-exec-role-arn>",
+    "networkMode": "awsvpc",
+    "volumes": [],
+    "placementConstraints": [],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "512",
+    "memory": "1024",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    }
+}
